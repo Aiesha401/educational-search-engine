@@ -1,5 +1,11 @@
+from document import Document
+
+
 def main():
-    print("Educational Search Engine")
+    document = Document("1", "The quick brown fox")
+
+    print(document.id)
+    print(document.text)
 
 
 if __name__ == "__main__":
