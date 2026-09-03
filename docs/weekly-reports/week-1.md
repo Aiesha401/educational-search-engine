@@ -25,7 +25,6 @@ Initialize the project structure and development environment.
 
 ### Current Architecture
 
-```text
 Project
    |
    v
@@ -46,7 +45,6 @@ Implemented the `Document` class with:
 
 ### Current Architecture
 
-```text
 Application
     |
     v
@@ -54,3 +52,32 @@ Document
     |
     ├── id
     └── text
+
+## Day 3 — Indexer and Document Storage
+
+### Objective
+
+Implement the component responsible for accepting and storing
+documents.
+
+### What I Built
+
+Implemented an `Indexer` with:
+
+- document indexing
+- document retrieval by ID
+- document counting
+- replacement behavior for duplicate document IDs
+
+### Current Architecture
+
+Application
+    |
+    v
+  Indexer
+    |
+    v
+Dictionary
+    |
+    v
+Documents
