@@ -1,5 +1,6 @@
 from document import Document
 from indexer import Indexer
+from searcher import Searcher
 
 
 def main():
@@ -14,12 +15,16 @@ def main():
     for document in documents:
         indexer.index(document)
 
-    print(f"Indexed documents: {indexer.count()}")
+    searcher = Searcher(indexer)
 
-    document = indexer.get("2")
+    query = "brown"
+    results = searcher.search(query)
 
-    if document is not None:
-        print(f"Document {document.id}: {document.text}")
+    print(f"Query: {query}")
+    print("Results:")
+
+    for document in results:
+        print(f"{document.id}: {document.text}")
 
 
 if __name__ == "__main__":

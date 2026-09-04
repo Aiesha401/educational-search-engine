@@ -81,3 +81,46 @@ Dictionary
     |
     v
 Documents
+
+## Day 4 — Basic Brute-Force Search
+
+### Objective
+
+Implement the first working search component.
+
+### What I Built
+
+Implemented a `Searcher` that scans the documents stored
+by the `Indexer` and returns documents whose text contains
+the query.
+
+### Search Algorithm
+
+Query
+  |
+  v
+Searcher
+  |
+  v
+Scan every document
+  |
+  +-- match --> result
+  |
+  +-- no match
+
+### current architecture
+
+                         APPLICATION
+                              │
+                ┌─────────────┴─────────────┐
+                │                           │
+             INDEX                        SEARCH
+                │                           │
+                ▼                           ▼
+             Indexer                    Searcher
+                │                           │
+                ▼                           │
+        In-memory dictionary ◄──────────────┘
+                │
+                ▼
+           Documents
