@@ -124,3 +124,47 @@ Scan every document
                 │
                 ▼
            Documents
+
+## Day 5 — Interactive CLI
+
+### Objective
+
+Make the search engine usable through an interactive command-line
+interface.
+
+### What I Built
+
+Implemented a CLI supporting:
+
+- indexing documents
+- searching documents
+- counting documents
+- displaying help
+- exiting the application
+
+### Current Architecture
+
+               USER
+                │
+                ▼
+                CLI
+          ┌─────┴─────┐
+          │           │
+        index        search
+          │           │
+          ▼           ▼
+        Indexer     Searcher
+          │           │
+          └─────┬─────┘
+                ▼
+        In-memory storage
+                │
+                ▼
+            Documents
+#### Supported Commands
+
+- index <id> "<text>"
+- search <query>
+- count
+- help
+- exit
