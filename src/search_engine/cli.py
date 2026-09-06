@@ -1,8 +1,8 @@
 import shlex
 
-from document import Document
-from indexer import Indexer
-from searcher import Searcher
+from src.search_engine.document import Document
+from src.search_engine.indexer import Indexer
+from src.search_engine.searcher import Searcher
 
 
 class SearchEngineCLI:

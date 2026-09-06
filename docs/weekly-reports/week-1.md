@@ -168,3 +168,70 @@ Implemented a CLI supporting:
 - count
 - help
 - exit
+
+## Day 6 — Baseline Benchmarking
+
+### Objective
+
+Measure the performance characteristics of the current brute-force
+search implementation before changing its architecture.
+
+### Benchmark
+
+Dataset sizes:
+
+- 10 documents
+- 100 documents
+- 1,000 documents
+- 10,000 documents
+
+Each query was executed 20 times.
+
+Queries:
+
+- `needle` — present in some documents
+- `notpresent` — absent from all documents
+
+### Results
+
+See `benchmarks/week1_search_baseline.csv`.
+
+### Observations
+
+- The Searcher scans every indexed document for every query.
+- A query returning no results still requires scanning the entire document collection.
+- Search cost generally increases as the number of documents increases.
+- The current implementation is therefore useful as a baseline but is not an efficient search architecture.
+
+### Important Discovery
+
+The main problem is not the number of matching documents.
+
+The main problem is that the Searcher does not have an index that tells
+it which documents contain a searched term.
+
+### Architecture Before Week 2
+
+Query
+  |
+  v
+Searcher
+  |
+  v
+Scan every document
+  |
+  v
+String matching
+  |
+  v
+Results
+
+### Week 2 Direction
+
+Replace the brute-force document scan with an inverted index.
+
+### What I Learned
+
+A search engine can produce correct results while still having a poor
+search architecture. Correctness and search efficiency are separate
+concerns.

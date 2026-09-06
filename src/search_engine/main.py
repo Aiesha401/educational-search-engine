@@ -1,4 +1,4 @@
-from cli import SearchEngineCLI
+from src.search_engine.cli import SearchEngineCLI
 
 
 def main():
