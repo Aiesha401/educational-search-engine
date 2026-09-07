@@ -166,7 +166,7 @@ Primary/replica architecture and failure recovery
 The implementation will evolve based on actual experiments and observations rather than trying to reproduce Elasticsearch itself.
 
 ## Project Structure
-
+```text
 educational-search-engine/
 ├── benchmarks/
 │   ├── benchmark_search.py
@@ -190,9 +190,9 @@ educational-search-engine/
 │   └── test_smoke.py
 ├── .gitignore
 └── README.md
-
+```
 ## Development Philosophy
-
+```text
 The project follows:
 
 BUILD
@@ -214,7 +214,7 @@ DOCUMENT
 COMMIT
   ↓
 PUBLISH
-
+```
 The goal is not to implement every feature found in Elasticsearch.
 
 The goal is to understand the mechanisms that make a search engine work.
