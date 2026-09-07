@@ -95,11 +95,13 @@ The Week 1 baseline benchmark measures brute-force search across:
 Each query is executed 20 times.
 
 ### Baseline Results
-Documents	Present Query	Absent Query
-10	0.0033 ms	0.0010 ms
-100	0.0127 ms	0.0077 ms
-1,000	0.0945 ms	0.0992 ms
-10,000	0.7853 ms	0.8213 ms
+
+| Documents | Present Query | Absent Query |
+|----------:|--------------:|-------------:|
+| 10        | 0.0033 ms     | 0.0010 ms    |
+| 100       | 0.0127 ms     | 0.0077 ms    |
+| 1,000     | 0.0945 ms     | 0.0992 ms    |
+| 10,000    | 0.7853 ms     | 0.8213 ms    |
 
 These measurements are a baseline from the development environment and are not intended as universal performance claims.
 
