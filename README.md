@@ -166,55 +166,55 @@ Primary/replica architecture and failure recovery
 The implementation will evolve based on actual experiments and observations rather than trying to reproduce Elasticsearch itself.
 
 ## Project Structure
-```text
-educational-search-engine/
-├── benchmarks/
-│   ├── benchmark_search.py
-│   └── week1_search_baseline.csv
-├── docs/
-│   └── weekly-reports/
-│       └── week-1.md
-├── src/
-│   └── search_engine/
-│       ├── __init__.py
-│       ├── cli.py
-│       ├── document.py
-│       ├── indexer.py
-│       ├── main.py
-│       └── searcher.py
-├── tests/
-│   ├── test_cli.py
-│   ├── test_document.py
-│   ├── test_indexer.py
-│   ├── test_searcher.py
-│   └── test_smoke.py
-├── .gitignore
-└── README.md
-```
+
+    educational-search-engine/
+    ├── benchmarks/
+    │   ├── benchmark_search.py
+    │   └── week1_search_baseline.csv
+    ├── docs/
+    │   └── weekly-reports/
+    │       └── week-1.md
+    ├── src/
+    │   └── search_engine/
+    │       ├── __init__.py
+    │       ├── cli.py
+    │       ├── document.py
+    │       ├── indexer.py
+    │       ├── main.py
+    │       └── searcher.py
+    ├── tests/
+    │   ├── test_cli.py
+    │   ├── test_document.py
+    │   ├── test_indexer.py
+    │   ├── test_searcher.py
+    │   └── test_smoke.py
+    ├── .gitignore
+    └── README.md
+
 ## Development Philosophy
-```text
+
 The project follows:
 
-BUILD
-  ↓
-RUN
-  ↓
-BREAK
-  ↓
-UNDERSTAND WHY
-  ↓
-FIX
-  ↓
-TEST
-  ↓
-OBSERVE
-  ↓
-DOCUMENT
-  ↓
-COMMIT
-  ↓
-PUBLISH
-```
+    BUILD
+      ↓
+    RUN
+      ↓
+    BREAK
+      ↓
+    UNDERSTAND WHY
+      ↓
+    FIX
+      ↓
+    TEST
+      ↓
+    OBSERVE
+      ↓
+    DOCUMENT
+      ↓
+    COMMIT
+      ↓
+    PUBLISH
+
 The goal is not to implement every feature found in Elasticsearch.
 
 The goal is to understand the mechanisms that make a search engine work.
