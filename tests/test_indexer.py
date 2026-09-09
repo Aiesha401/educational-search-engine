@@ -46,3 +46,8 @@ def test_indexing_same_id_replaces_document():
 
     assert indexer.get("1") is second
     assert indexer.count() == 1
+
+def test_inverted_index_starts_empty():
+    indexer = Indexer()
+
+    assert indexer.inverted_index == {}
