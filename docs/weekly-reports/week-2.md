@@ -72,45 +72,6 @@ goal is to represent document membership:
 Term frequency and positional information are intentionally not part
 of this day's implementation.
 
-### Manual Experiments
-
-Inspected the existing document store and confirmed that it is a
-dictionary mapping string document IDs to `Document` objects.
-
-For example:
-
-"1" → Document("1", "The quick brown fox")
-
-Attempting to access the dictionary as if it were a Document produced
-an AttributeError.
-
-Attempting to access integer keys such as `0` or `1` produced KeyError
-because the document IDs are strings.
-
-Accessing the correct string key successfully retrieved the document:
-
-indexer.documents["1"].text
-
-Result:
-
-The quick brown fox
-
-These experiments confirmed the current structure of the document
-store.
-
-### Testing
-
-Ran the complete test suite:
-
-    python -m pytest
-
-Result:
-
-    22 passed in 0.10s
-
-All existing Week 1 tests continue to pass after introducing the
-new inverted-index structure.
-
 ### Important Observation
 
 The inverted index currently exists but is not populated.
@@ -155,3 +116,94 @@ Completed.
 ### Next Step
 
 Day 2 — Populate the inverted index when documents are indexed.
+
+
+## Day 2 — Populate the Inverted Index
+
+### Objective
+
+Make the Indexer populate the inverted index when documents
+are indexed.
+
+### Implementation
+
+The `Indexer` now maintains two structures:
+
+documents:
+
+document ID → Document
+
+inverted_index:
+
+term → document IDs
+
+Terms are currently extracted using simple whitespace splitting.
+
+Example:
+
+"The quick brown fox"
+
+becomes:
+
+["The", "quick", "brown", "fox"]
+
+The corresponding inverted-index entries are:
+
+The → {"1"}
+quick → {"1"}
+brown → {"1"}
+fox → {"1"}
+
+### Multiple Documents
+
+When multiple documents contain the same term, their document IDs
+are stored in the same posting.
+
+Example:
+
+brown → {"1", "3"}
+dog → {"2", "3"}
+
+### Duplicate Terms
+
+A set is used for document IDs.
+
+Therefore, if a document contains:
+
+"brown brown brown fox"
+
+the inverted index contains:
+
+brown → {"1"}
+fox → {"1"}
+
+rather than storing the same document ID multiple times.
+
+Term frequency is intentionally not tracked yet.
+
+### Current Architecture
+
+                    Indexer
+                   /       \
+                  /         \
+                 ▼           ▼
+          Document Store   Inverted Index
+                 │           │
+                 │           └── term → document IDs
+                 │
+                 └───────────────┐
+                                 ▼
+                             Documents
+
+The Searcher still uses the Week 1 brute-force implementation.
+
+### Key Observation
+
+The inverted index is now populated during indexing, but search
+does not use it yet.
+
+This creates the foundation for changing the search path on Day 3.
+
+### Next Step
+
+Day 3 — Replace brute-force search with inverted-index lookup.
