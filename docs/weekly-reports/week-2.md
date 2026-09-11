@@ -207,3 +207,97 @@ This creates the foundation for changing the search path on Day 3.
 ### Next Step
 
 Day 3 — Replace brute-force search with inverted-index lookup.
+
+## Day 3 — Search Using the Inverted Index
+
+### Objective
+
+Change search from scanning every document to using the inverted index to directly locate documents containing the queried term.
+
+### Starting Point
+
+The inverted index was populated during Day 2, but Searcher still used the Week 1 brute-force approach.
+
+### Implementation
+
+Searcher was changed to:
+
+1. Look up the query term in the inverted index.
+2. Retrieve matching document IDs.
+3. Retrieve the corresponding Document objects.
+4. Return the matching documents.
+
+The new search path is:
+
+    query
+      |
+      v
+    inverted index
+      |
+      v
+    document IDs
+      |
+      v
+    documents
+
+### Behavior Change
+
+Week 1 used substring matching through:
+
+    query in document.text
+
+The new implementation uses exact term lookup.
+
+For example, a document containing:
+
+    dogmatic
+
+does not match:
+
+    dog
+
+but does match:
+
+    dogmatic
+
+This is an intentional consequence of moving from brute-force substring search to term-based lookup.
+
+### Case Sensitivity
+
+Search remains case-sensitive.
+
+For example:
+
+    Beautiful
+
+matches:
+
+    Beautiful
+
+but:
+
+    beautiful
+
+does not.
+
+Normalization is intentionally deferred to Week 3.
+
+### Important Observation
+
+Searcher no longer needs to scan every indexed document.
+
+The query is first resolved through the inverted index to obtain candidate document IDs.
+
+### Known Issue
+
+Duplicate document IDs can still leave stale postings in the inverted index.
+
+This issue was intentionally left for Day 4.
+
+### Status
+
+Day 3 complete.
+
+### Next Step
+
+Day 4 will investigate and fix inverted-index consistency when an existing document ID is replaced.
