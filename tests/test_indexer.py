@@ -109,3 +109,39 @@ def test_indexing_empty_document_creates_no_postings():
 
     assert indexer.inverted_index == {}
     assert indexer.get("1") is document
+
+def test_replacing_document_removes_old_postings():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown fox"))
+
+    indexer.index(Document("1", "red dog"))
+
+    assert "brown" not in indexer.inverted_index
+    assert "fox" not in indexer.inverted_index
+    assert indexer.inverted_index["red"] == {"1"}
+    assert indexer.inverted_index["dog"] == {"1"}
+
+
+def test_replacing_document_preserves_shared_terms():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown fox"))
+    indexer.index(Document("2", "brown dog"))
+
+    indexer.index(Document("1", "red dog"))
+
+    assert indexer.inverted_index["brown"] == {"2"}
+    assert "fox" not in indexer.inverted_index
+    assert indexer.inverted_index["red"] == {"1"}
+    assert indexer.inverted_index["dog"] == {"1", "2"}
+
+def test_replacing_document_with_empty_text_removes_old_postings():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown fox"))
+
+    indexer.index(Document("1", ""))
+
+    assert indexer.get("1").text == ""
+    assert indexer.inverted_index == {}

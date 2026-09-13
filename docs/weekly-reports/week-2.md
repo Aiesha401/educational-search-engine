@@ -301,3 +301,56 @@ Day 3 complete.
 ### Next Step
 
 Day 4 will investigate and fix inverted-index consistency when an existing document ID is replaced.
+
+## Day 4 — Fix Inverted Index Consistency
+
+### Objective
+
+Fix stale postings when an existing document ID is replaced.
+
+### Problem
+
+When a document was indexed using an existing ID, the document store replaced the old document but the inverted index retained postings belonging to the old document.
+
+For example:
+
+    index 1 "brown fox"
+    index 1 "red dog"
+
+Previously this could leave:
+
+    brown → {"1"}
+    fox → {"1"}
+    red → {"1"}
+    dog → {"1"}
+
+This was inconsistent because document 1 no longer contained brown or fox.
+
+### Implementation
+
+When replacing an existing document:
+
+1. Retrieve the old document.
+2. Extract its terms.
+3. Remove the document ID from each old term's postings.
+4. Remove terms whose postings become empty.
+5. Store the new document.
+6. Add the new document's terms to the inverted index.
+
+### Invariant
+
+The inverted index should only associate a document ID with terms that occur in the current version of that document.
+
+### Important Observation
+
+The document store and inverted index represent related but separate pieces of state.
+
+Updating one without updating the other creates inconsistent search behavior.
+
+### Status
+
+Day 4 complete.
+
+### Next Step
+
+Day 5 will benchmark brute-force search against inverted-index search using the same methodology as the Week 1 baseline.
