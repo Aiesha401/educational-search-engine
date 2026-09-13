@@ -354,3 +354,93 @@ Day 4 complete.
 ### Next Step
 
 Day 5 will benchmark brute-force search against inverted-index search using the same methodology as the Week 1 baseline.
+
+## Day 5 — Benchmark Brute-Force vs Inverted-Index Search
+
+### Objective
+
+Measure the performance difference between the Week 1 brute-force search implementation and the Week 2 inverted-index search implementation.
+
+### Methodology
+
+The benchmark compares both approaches using the same indexed document collections.
+
+Document counts:
+
+- 10
+- 100
+- 1,000
+- 10,000
+- 20,000
+
+Each measurement uses 20 repetitions.
+
+Queries:
+
+- `needle` — present in one document
+- `notpresent` — absent from the collection
+
+Search time is measured using Python's `time.perf_counter()`.
+
+### Implementations Compared
+
+#### Brute Force
+
+    query
+      |
+      v
+    scan every document
+      |
+      v
+    check document text
+
+#### Inverted Index
+
+    query
+      |
+      v
+    inverted index lookup
+      |
+      v
+    document IDs
+      |
+      v
+    documents
+
+### Correctness Verification
+
+Before measuring performance, the benchmark compares the document IDs returned by both implementations.
+
+The benchmark asserts that both implementations return the same set of matching document IDs.
+
+### Results
+
+Results are stored in:
+
+    benchmarks/week2_search_comparison.csv
+
+### Observations
+
+Record observations based on the actual benchmark results.
+
+Questions considered:
+
+- How does brute-force search time change as document count increases?
+- How does inverted-index search time change?
+- Is the difference noticeable at small document counts?
+- Does the difference become more noticeable at larger document counts?
+- How do present and absent queries compare?
+
+### Key Engineering Observation
+
+The inverted index changes the search operation from scanning the document collection to directly locating documents associated with a term.
+
+The benchmark provides experimental evidence for the effect of this architectural change.
+
+### Status
+
+Day 5 complete.
+
+### Next Step
+
+Day 6 will review the entire Week 2 implementation, compare planned work with completed work, run the final test suite and benchmark, finalize documentation, and prepare the Week 2 publication.
