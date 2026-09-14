@@ -46,3 +46,102 @@ def test_indexing_same_id_replaces_document():
 
     assert indexer.get("1") is second
     assert indexer.count() == 1
+
+def test_inverted_index_starts_empty():
+    indexer = Indexer()
+
+    assert indexer.inverted_index == {}
+
+def test_index_creates_inverted_index_entries():
+    indexer = Indexer()
+
+    document = Document("1", "The quick brown fox")
+    indexer.index(document)
+
+    assert indexer.inverted_index["The"] == {"1"}
+    assert indexer.inverted_index["quick"] == {"1"}
+    assert indexer.inverted_index["brown"] == {"1"}
+    assert indexer.inverted_index["fox"] == {"1"}
+
+def test_inverted_index_tracks_multiple_documents():
+    indexer = Indexer()
+
+    document1 = Document("1", "The quick brown fox")
+    document2 = Document("2", "The lazy dog")
+    document3 = Document("3", "The brown dog")
+
+    indexer.index(document1)
+    indexer.index(document2)
+    indexer.index(document3)
+
+    assert indexer.inverted_index["The"] == {"1", "2", "3"}
+    assert indexer.inverted_index["brown"] == {"1", "3"}
+    assert indexer.inverted_index["dog"] == {"2", "3"}
+
+def test_repeated_term_does_not_duplicate_document_id():
+    indexer = Indexer()
+
+    document = Document("1", "brown brown brown fox")
+    indexer.index(document)
+
+    assert indexer.inverted_index["brown"] == {"1"}
+    assert indexer.inverted_index["fox"] == {"1"}
+
+def test_terms_have_independent_postings():
+    indexer = Indexer()
+
+    document1 = Document("1", "brown fox")
+    document2 = Document("2", "red dog")
+
+    indexer.index(document1)
+    indexer.index(document2)
+
+    assert indexer.inverted_index["brown"] == {"1"}
+    assert indexer.inverted_index["fox"] == {"1"}
+    assert indexer.inverted_index["red"] == {"2"}
+    assert indexer.inverted_index["dog"] == {"2"}
+
+def test_indexing_empty_document_creates_no_postings():
+    indexer = Indexer()
+
+    document = Document("1", "")
+    indexer.index(document)
+
+    assert indexer.inverted_index == {}
+    assert indexer.get("1") is document
+
+def test_replacing_document_removes_old_postings():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown fox"))
+
+    indexer.index(Document("1", "red dog"))
+
+    assert "brown" not in indexer.inverted_index
+    assert "fox" not in indexer.inverted_index
+    assert indexer.inverted_index["red"] == {"1"}
+    assert indexer.inverted_index["dog"] == {"1"}
+
+
+def test_replacing_document_preserves_shared_terms():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown fox"))
+    indexer.index(Document("2", "brown dog"))
+
+    indexer.index(Document("1", "red dog"))
+
+    assert indexer.inverted_index["brown"] == {"2"}
+    assert "fox" not in indexer.inverted_index
+    assert indexer.inverted_index["red"] == {"1"}
+    assert indexer.inverted_index["dog"] == {"1", "2"}
+
+def test_replacing_document_with_empty_text_removes_old_postings():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown fox"))
+
+    indexer.index(Document("1", ""))
+
+    assert indexer.get("1").text == ""
+    assert indexer.inverted_index == {}
