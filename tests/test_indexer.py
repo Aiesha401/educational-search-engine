@@ -58,10 +58,17 @@ def test_index_creates_inverted_index_entries():
     document = Document("1", "The quick brown fox")
     indexer.index(document)
 
-    assert indexer.inverted_index["The"] == {"1"}
-    assert indexer.inverted_index["quick"] == {"1"}
-    assert indexer.inverted_index["brown"] == {"1"}
-    assert indexer.inverted_index["fox"] == {"1"}
+    assert indexer.inverted_index["The"]["1"].document_id == "1"
+    assert indexer.inverted_index["The"]["1"].term_frequency == 1
+
+    assert indexer.inverted_index["quick"]["1"].document_id == "1"
+    assert indexer.inverted_index["quick"]["1"].term_frequency == 1
+
+    assert indexer.inverted_index["brown"]["1"].document_id == "1"
+    assert indexer.inverted_index["brown"]["1"].term_frequency == 1
+
+    assert indexer.inverted_index["fox"]["1"].document_id == "1"
+    assert indexer.inverted_index["fox"]["1"].term_frequency == 1
 
 def test_inverted_index_tracks_multiple_documents():
     indexer = Indexer()
@@ -74,9 +81,9 @@ def test_inverted_index_tracks_multiple_documents():
     indexer.index(document2)
     indexer.index(document3)
 
-    assert indexer.inverted_index["The"] == {"1", "2", "3"}
-    assert indexer.inverted_index["brown"] == {"1", "3"}
-    assert indexer.inverted_index["dog"] == {"2", "3"}
+    assert set(indexer.inverted_index["The"].keys()) == {"1", "2", "3"}
+    assert set(indexer.inverted_index["brown"].keys()) == {"1", "3"}
+    assert set(indexer.inverted_index["dog"].keys()) == {"2", "3"}
 
 def test_repeated_term_does_not_duplicate_document_id():
     indexer = Indexer()
@@ -84,8 +91,11 @@ def test_repeated_term_does_not_duplicate_document_id():
     document = Document("1", "brown brown brown fox")
     indexer.index(document)
 
-    assert indexer.inverted_index["brown"] == {"1"}
-    assert indexer.inverted_index["fox"] == {"1"}
+    assert set(indexer.inverted_index["brown"].keys()) == {"1"}
+    assert indexer.inverted_index["brown"]["1"].term_frequency == 3
+
+    assert set(indexer.inverted_index["fox"].keys()) == {"1"}
+    assert indexer.inverted_index["fox"]["1"].term_frequency == 1
 
 def test_terms_have_independent_postings():
     indexer = Indexer()
@@ -96,10 +106,10 @@ def test_terms_have_independent_postings():
     indexer.index(document1)
     indexer.index(document2)
 
-    assert indexer.inverted_index["brown"] == {"1"}
-    assert indexer.inverted_index["fox"] == {"1"}
-    assert indexer.inverted_index["red"] == {"2"}
-    assert indexer.inverted_index["dog"] == {"2"}
+    assert set(indexer.inverted_index["brown"].keys()) == {"1"}
+    assert set(indexer.inverted_index["fox"].keys()) == {"1"}
+    assert set(indexer.inverted_index["red"].keys()) == {"2"}
+    assert set(indexer.inverted_index["dog"].keys()) == {"2"}
 
 def test_indexing_empty_document_creates_no_postings():
     indexer = Indexer()
@@ -119,8 +129,8 @@ def test_replacing_document_removes_old_postings():
 
     assert "brown" not in indexer.inverted_index
     assert "fox" not in indexer.inverted_index
-    assert indexer.inverted_index["red"] == {"1"}
-    assert indexer.inverted_index["dog"] == {"1"}
+    assert indexer.inverted_index["red"].keys() == {"1"}
+    assert indexer.inverted_index["dog"].keys() == {"1"}
 
 
 def test_replacing_document_preserves_shared_terms():
@@ -131,10 +141,10 @@ def test_replacing_document_preserves_shared_terms():
 
     indexer.index(Document("1", "red dog"))
 
-    assert indexer.inverted_index["brown"] == {"2"}
+    assert set(indexer.inverted_index["brown"].keys()) == {"2"}
     assert "fox" not in indexer.inverted_index
-    assert indexer.inverted_index["red"] == {"1"}
-    assert indexer.inverted_index["dog"] == {"1", "2"}
+    assert set(indexer.inverted_index["red"].keys()) == {"1"}
+    assert set(indexer.inverted_index["dog"].keys()) == {"1", "2"}
 
 def test_replacing_document_with_empty_text_removes_old_postings():
     indexer = Indexer()
@@ -145,3 +155,46 @@ def test_replacing_document_with_empty_text_removes_old_postings():
 
     assert indexer.get("1").text == ""
     assert indexer.inverted_index == {}
+
+def test_posting_contains_term_frequency():
+    from src.search_engine.document import Document
+    from src.search_engine.indexer import Indexer
+
+    indexer = Indexer()
+    document = Document("1", "dog cat dog")
+
+    indexer.index(document)
+
+    posting = indexer.inverted_index["dog"]["1"]
+
+    assert posting.document_id == "1"
+    assert posting.term_frequency == 2
+
+
+def test_each_document_has_its_own_posting():
+    from src.search_engine.document import Document
+    from src.search_engine.indexer import Indexer
+
+    indexer = Indexer()
+
+    indexer.index(Document("1", "dog dog"))
+    indexer.index(Document("2", "dog"))
+
+    assert indexer.inverted_index["dog"]["1"].term_frequency == 2
+    assert indexer.inverted_index["dog"]["2"].term_frequency == 1
+
+
+def test_replacing_document_updates_term_frequencies():
+    from src.search_engine.document import Document
+    from src.search_engine.indexer import Indexer
+
+    indexer = Indexer()
+
+    indexer.index(Document("1", "brown dog dog"))
+    indexer.index(Document("1", "red fox"))
+
+    assert "brown" not in indexer.inverted_index
+    assert "dog" not in indexer.inverted_index
+
+    assert indexer.inverted_index["red"]["1"].term_frequency == 1
+    assert indexer.inverted_index["fox"]["1"].term_frequency == 1
