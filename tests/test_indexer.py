@@ -58,8 +58,8 @@ def test_index_creates_inverted_index_entries():
     document = Document("1", "The quick brown fox")
     indexer.index(document)
 
-    assert indexer.inverted_index["The"]["1"].document_id == "1"
-    assert indexer.inverted_index["The"]["1"].term_frequency == 1
+    assert indexer.inverted_index["the"]["1"].document_id == "1"
+    assert indexer.inverted_index["the"]["1"].term_frequency == 1
 
     assert indexer.inverted_index["quick"]["1"].document_id == "1"
     assert indexer.inverted_index["quick"]["1"].term_frequency == 1
@@ -81,7 +81,7 @@ def test_inverted_index_tracks_multiple_documents():
     indexer.index(document2)
     indexer.index(document3)
 
-    assert set(indexer.inverted_index["The"].keys()) == {"1", "2", "3"}
+    assert set(indexer.inverted_index["the"].keys()) == {"1", "2", "3"}
     assert set(indexer.inverted_index["brown"].keys()) == {"1", "3"}
     assert set(indexer.inverted_index["dog"].keys()) == {"2", "3"}
 
@@ -230,3 +230,36 @@ def test_different_terms_have_correct_positions():
     assert indexer.inverted_index["dog"]["1"].positions == [0, 3]
     assert indexer.inverted_index["cat"]["1"].positions == [1]
     assert indexer.inverted_index["bird"]["1"].positions == [2]
+
+def test_indexer_uses_analyzer_for_lowercase_normalization():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "The QUICK Brown Fox"))
+
+    assert "the" in indexer.inverted_index
+    assert "quick" in indexer.inverted_index
+    assert "brown" in indexer.inverted_index
+    assert "fox" in indexer.inverted_index
+
+    assert "The" not in indexer.inverted_index
+    assert "QUICK" not in indexer.inverted_index
+
+def test_search_index_is_case_insensitive():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "Python Programming"))
+
+    assert "python" in indexer.inverted_index
+    assert "programming" in indexer.inverted_index
+
+def test_positions_are_based_on_analyzed_tokens():
+    indexer = Indexer()
+
+    indexer.index(
+        Document("1", "The DOG is a DOG")
+    )
+
+    posting = indexer.inverted_index["dog"]["1"]
+
+    assert posting.term_frequency == 2
+    assert posting.positions == [1, 4]

@@ -66,7 +66,7 @@ def test_search_is_case_sensitive():
     searcher = Searcher(indexer)
 
     assert searcher.search("Beautiful") == [document]
-    assert searcher.search("beautiful") == []
+    assert searcher.search("beautiful") == [document]
 
 
 def test_search_uses_exact_terms_not_substrings():
@@ -79,3 +79,15 @@ def test_search_uses_exact_terms_not_substrings():
 
     assert searcher.search("dog") == []
     assert searcher.search("dogmatic") == [document]
+
+def test_search_normalizes_query():
+    indexer = Indexer()
+
+    document = Document("1", "Python Programming")
+    indexer.index(document)
+
+    searcher = Searcher(indexer)
+
+    assert searcher.search("PYTHON") == [document]
+    assert searcher.search("python") == [document]
+    assert searcher.search("Python") == [document]

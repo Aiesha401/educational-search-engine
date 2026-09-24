@@ -1,3 +1,4 @@
+from src.search_engine.analyzer import Analyzer
 from src.search_engine.posting import Posting
 
 
@@ -5,12 +6,13 @@ class Indexer:
     def __init__(self):
         self.documents = {}
         self.inverted_index = {}
+        self.analyzer = Analyzer()
 
     def index(self, document):
         old_document = self.documents.get(document.id)
 
         if old_document is not None:
-            old_terms = old_document.text.split()
+            old_terms = self.analyzer.analyze(old_document.text)
 
             for term in old_terms:
                 postings = self.inverted_index.get(term)
@@ -23,7 +25,7 @@ class Indexer:
 
         self.documents[document.id] = document
 
-        terms = document.text.split()
+        terms = self.analyzer.analyze(document.text)
 
         term_data = {}
 
