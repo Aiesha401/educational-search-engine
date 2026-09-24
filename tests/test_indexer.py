@@ -198,3 +198,35 @@ def test_replacing_document_updates_term_frequencies():
 
     assert indexer.inverted_index["red"]["1"].term_frequency == 1
     assert indexer.inverted_index["fox"]["1"].term_frequency == 1
+
+def test_posting_stores_term_positions():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "dog cat dog"))
+
+    posting = indexer.inverted_index["dog"]["1"]
+
+    assert posting.document_id == "1"
+    assert posting.term_frequency == 2
+    assert posting.positions == [0, 2]
+
+
+def test_posting_stores_position_for_single_term():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "the quick brown fox"))
+
+    posting = indexer.inverted_index["brown"]["1"]
+
+    assert posting.term_frequency == 1
+    assert posting.positions == [2]
+
+
+def test_different_terms_have_correct_positions():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "dog cat bird dog"))
+
+    assert indexer.inverted_index["dog"]["1"].positions == [0, 3]
+    assert indexer.inverted_index["cat"]["1"].positions == [1]
+    assert indexer.inverted_index["bird"]["1"].positions == [2]

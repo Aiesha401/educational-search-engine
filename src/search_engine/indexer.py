@@ -25,18 +25,26 @@ class Indexer:
 
         terms = document.text.split()
 
-        term_frequencies = {}
+        term_data = {}
 
-        for term in terms:
-            term_frequencies[term] = term_frequencies.get(term, 0) + 1
+        for position, term in enumerate(terms):
+            if term not in term_data:
+                term_data[term] = {
+                    "frequency": 0,
+                    "positions": [],
+                }
 
-        for term, frequency in term_frequencies.items():
+            term_data[term]["frequency"] += 1
+            term_data[term]["positions"].append(position)
+
+        for term, data in term_data.items():
             if term not in self.inverted_index:
                 self.inverted_index[term] = {}
 
             self.inverted_index[term][document.id] = Posting(
                 document.id,
-                frequency,
+                data["frequency"],
+                data["positions"],
             )
 
     def get(self, document_id):
