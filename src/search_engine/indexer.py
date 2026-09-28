@@ -54,3 +54,15 @@ class Indexer:
 
     def count(self):
         return len(self.documents)
+
+    def document_frequency(self, term):
+        analyzed_terms = self.analyzer.analyze(term)
+
+        if not analyzed_terms:
+            return 0
+
+        term = analyzed_terms[0]
+
+        postings = self.inverted_index.get(term, {})
+
+        return len(postings)

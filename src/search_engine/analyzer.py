@@ -8,8 +8,3 @@ class Analyzer:
     def analyze(self, text: str) -> list[str]:
         tokens = self.tokenize(text)
         return self.normalize(tokens)
-
-tokens = Analyzer().tokenize("The Quick Brown Fox")
-print(tokens)
-
-print(Analyzer().analyze("Dog dog DOG dOg"))

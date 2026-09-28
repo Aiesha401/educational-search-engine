@@ -263,3 +263,41 @@ def test_positions_are_based_on_analyzed_tokens():
 
     assert posting.term_frequency == 2
     assert posting.positions == [1, 4]
+
+def test_document_frequency_counts_documents_containing_term():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "dog cat"))
+    indexer.index(Document("2", "dog bird"))
+    indexer.index(Document("3", "cat bird"))
+
+    assert indexer.document_frequency("dog") == 2
+    assert indexer.document_frequency("cat") == 2
+    assert indexer.document_frequency("bird") == 2
+
+def test_document_frequency_counts_documents_not_term_occurrences():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "dog dog dog"))
+    indexer.index(Document("2", "dog"))
+    indexer.index(Document("3", "cat"))
+
+    assert indexer.document_frequency("dog") == 2
+
+def test_document_frequency_returns_zero_for_unknown_term():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "dog cat"))
+
+    assert indexer.document_frequency("elephant") == 0
+
+def test_document_frequency_normalizes_term():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "Python"))
+    indexer.index(Document("2", "python"))
+    indexer.index(Document("3", "PYTHON"))
+
+    assert indexer.document_frequency("python") == 3
+    assert indexer.document_frequency("PYTHON") == 3
+    assert indexer.document_frequency("Python") == 3
