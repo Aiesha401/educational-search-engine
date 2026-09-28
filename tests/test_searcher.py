@@ -91,3 +91,25 @@ def test_search_normalizes_query():
     assert searcher.search("PYTHON") == [document]
     assert searcher.search("python") == [document]
     assert searcher.search("Python") == [document]
+
+def test_search_empty_query_returns_no_results():
+    indexer = Indexer()
+
+    indexer.index(
+        Document("1", "The quick brown fox")
+    )
+
+    searcher = Searcher(indexer)
+
+    assert searcher.search("") == []
+
+def test_search_whitespace_query_returns_no_results():
+    indexer = Indexer()
+
+    indexer.index(
+        Document("1", "The quick brown fox")
+    )
+
+    searcher = Searcher(indexer)
+
+    assert searcher.search("   ") == []

@@ -301,3 +301,25 @@ def test_document_frequency_normalizes_term():
     assert indexer.document_frequency("python") == 3
     assert indexer.document_frequency("PYTHON") == 3
     assert indexer.document_frequency("Python") == 3
+
+def test_indexing_uses_analysis_for_frequency_and_positions():
+    indexer = Indexer()
+
+    indexer.index(
+        Document("1", "DOG dog Dog cat")
+    )
+
+    posting = indexer.inverted_index["dog"]["1"]
+
+    assert posting.term_frequency == 3
+    assert posting.positions == [0, 1, 2]
+
+def test_document_frequency_uses_analyzed_terms():
+    indexer = Indexer()
+
+    indexer.index(Document("1", "DOG"))
+    indexer.index(Document("2", "dog"))
+    indexer.index(Document("3", "Dog"))
+
+    assert indexer.document_frequency("DOG") == 3
+    assert indexer.document_frequency("dog") == 3

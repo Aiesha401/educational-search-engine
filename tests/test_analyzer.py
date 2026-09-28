@@ -47,3 +47,22 @@ def test_normalization_does_not_remove_tokens():
     result = analyzer.analyze("DOG dog DoG")
 
     assert result == ["dog", "dog", "dog"]
+
+def test_analyze_handles_only_spaces():
+    analyzer = Analyzer()
+
+    assert analyzer.analyze("     ") == []
+
+def test_analyze_preserves_punctuation():
+    analyzer = Analyzer()
+
+    assert analyzer.analyze("hello, world!") == ["hello,", "world!"]
+
+def test_analyze_preserves_numbers():
+    analyzer = Analyzer()
+
+    assert analyzer.analyze("python 123 456") == [
+        "python",
+        "123",
+        "456",
+    ]
