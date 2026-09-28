@@ -89,3 +89,73 @@ The index can now store information about how often a term appears in each docum
 ### Next
 
 Day 3 — Introduce Positions into postings.
+
+## Day 3 — Positions
+
+Today I extended postings to store term positions.
+
+### What I did
+Added positions to Posting.
+Stored the zero-based position of every term occurrence.
+Kept term frequency and positions consistent.
+Added tests for repeated terms and position tracking.
+Verified document replacement still removes old postings.
+Result
+
+Postings now contain:
+
+document_id
+term_frequency
+positions
+
+## Day 4 — Analyzer Integration
+
+Today I connected the Analyzer to both indexing and searching.
+
+### What I did
+Indexing now uses Analyzer.analyze().
+Search queries also use the Analyzer.
+Added lowercase normalization to the complete indexing/search flow.
+Updated tests for case-insensitive searching.
+Verified TF and positions still work after normalization.
+
+### Result
+"Python", "PYTHON", "python"
+
+are treated as the same term.
+
+## Day 5 — Document Frequency
+
+Today I added Document Frequency (DF).
+
+### What I did
+Added document_frequency() to the Indexer.
+DF counts how many different documents contain a term.
+Verified repeated occurrences in one document count only once.
+Added tests for unknown terms, normalization, and document replacement.
+
+### Result
+
+The index can now provide:
+
+TF → occurrences within a document
+DF → documents containing the term
+
+## Day 6 — Integration + Final Review
+
+Today I focused on integrating and testing the complete Week 3 pipeline.
+
+### What I did
+Added Analyzer edge-case tests.
+Added empty and whitespace query tests.
+Added integration tests for normalization + TF + positions.
+Added integration tests for normalization + DF.
+Ran the complete test suite.
+Committed and pushed the final Week 3 changes.
+Merged week-3-analysis-postings into main.
+Ran the complete test suite again after the merge.
+
+### Final Result
+57 passed
+
+Week 3 is now complete.
