@@ -159,3 +159,31 @@ Ran the complete test suite again after the merge.
 57 passed
 
 Week 3 is now complete.
+
+## week 3 Architecture:
+
+                    Document
+                       │
+                       ▼
+                    Analyzer
+                 ┌─────┴─────┐
+                 │           │
+            Tokenize      Normalize
+                 │           │
+                 └─────┬─────┘
+                       │
+                     Tokens
+                       │
+                       ▼
+                    Indexer
+                       │
+                       ▼
+                Inverted Index
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+           Term              Postings
+                                 │
+                         ┌───────┼───────┐
+                         │       │       │
+                    Document ID  TF   Positions
